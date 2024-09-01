@@ -27,10 +27,15 @@ def create_words_table(cur: sqlite3.Connection.cursor):
             ham_count INTEGER DEFAULT 0,
             ham_probability DOUBLE
 )''')
+    
+
 def init_info_table(cur: sqlite3.Connection.cursor):
     cur.execute('''CREATE TABLE IF NOT EXISTS info(
                 data_label TEXT PRIMARY KEY,
                 data INTEGER DEFAULT 0 )''')    
+    cur.execute('INSERT INTO info (data_label,data) VALUES(?,0)',("spam"))
+    cur.execute('INSERT INTO info (data_label,data) VALUES(?,0)',("ham"))
+
 
 #reads email data from emails.csv file with pandas
 def load_data()->pd.DataFrame:
@@ -63,9 +68,10 @@ def process_words(words:List[str],is_spam:bool):
 def update_word(cur:sqlite3.Connection.cursor,word:str,is_spam:bool):
         result=check_word(cur,word)
         if result:
-            cur.execute('UPDATE words SET spam_count=spam_count+1 WHERE word=?',(word))
-        else:
-            cur.execute('UPDATE words SET ham_count=ham_count+1 WHERE word=?',(word))
+            if is_spam:
+                cur.execute('UPDATE words SET spam_count=spam_count+1 WHERE word=?',(word))
+            else:
+                cur.execute('UPDATE words SET ham_count=ham_count+1 WHERE word=?',(word))
 
 #checks if the word is present in the database
 def check_word(cur:sqlite3.Connection.cursor, word:str)->bool:
