@@ -8,6 +8,7 @@ def train():
     conn = sqlite3.Connection('maths\\bayesian-analysis\\data\\words.db')
     cur=create_cursor(conn)
     create_words_table(cur)
+    init_info_table()
     data=load_data()
     print(data.head())
 
@@ -78,9 +79,6 @@ def update_word(cur:sqlite3.Connection.cursor,word:str,is_spam:bool):
             else:
                 cur.execute('INSERT INTO words VALUES(?,0,0,1,0)',(word))
 
-def calculate_probability(cur:sqlite3.Connection.cursor,word:str,is_spam:bool):   
-    if is_spam:
-        cur.execute("SELECT * FROM info WHERE data_label=?",('spam'))
 #checks if the word is present in the database
 def check_word(cur:sqlite3.Connection.cursor, word:str)->bool:
     cur.execute('''SELECT * FROM words WHERE word = ?'''(word,))
@@ -88,5 +86,21 @@ def check_word(cur:sqlite3.Connection.cursor, word:str)->bool:
     return result
 
 
+def update_probability(cur:sqlite3.Connection.cursor):   
+    cur.execute("SELECT * FROM words")
+    words = cur.fetchall()
+    for word in words:
+        calculate_probability(cur,word)
+def calculate_probability(cur:sqlite3.Connection.cursor,word:tuple):
+    cur.execute("SELECT * FROM words WHERE word=?",(word[0]))
+def get_spam_count(cur:sqlite3.Connection.cursor)->int:
+    cur.execute("SELECT * FROM info WHERE data_label=?",('spam'))
+    spam_data=cur.fetchone()
+    return spam_data[1]
+
+def get_ham_count(cur:sqlite3.Connection.cursor)->int:
+    cur.execute("SELECT * FROM info WHERE data_label=?",('ham'))
+    ham_data=cur.fetchone()
+    return ham_data[1]
 train()
 
