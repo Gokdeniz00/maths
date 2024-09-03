@@ -119,10 +119,12 @@ def gui():
     window =tk.Tk()
     title=tk.Label(text="Spam! detector:")
     input = tk.Text()
-    button=tk.Button(text="Detect")
+    button=tk.Button(text="Detect",command=detect(input.get()))
     title.pack()
     input.pack()
     button.pack()
     window.mainloop()
+def detect(email:str):
+
 gui()
 
