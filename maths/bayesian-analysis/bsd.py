@@ -2,6 +2,7 @@ import sqlite3
 import pandas as pd
 import  re
 from typing import List
+import tkinter as tk
 
 #main training function that reads emails and collects word data
 def train():
@@ -111,5 +112,9 @@ def get_ham_count(cur:sqlite3.Connection.cursor)->int:
     cur.execute("SELECT * FROM info WHERE data_label=?",('hammails'))
     ham_data=cur.fetchone()
     return ham_data[1]
-train()
 
+#part two gui
+
+def gui():
+    window =tk.Tk()
+    title=tk.Label(text="Spam! detector:")
