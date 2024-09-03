@@ -87,7 +87,7 @@ def update_word(cur:sqlite3.Connection.cursor,word:str,is_spam:bool):
 
 #checks if the word is present in the database
 def check_word(cur:sqlite3.Connection.cursor, word:str)->bool:
-    cur.execute('''SELECT * FROM words WHERE word = ?'''(word,))
+    cur.execute('''SELECT * FROM words WHERE word = ?''',(word,))
     result = cur.fetchone()
     return result
 
@@ -118,3 +118,11 @@ def get_ham_count(cur:sqlite3.Connection.cursor)->int:
 def gui():
     window =tk.Tk()
     title=tk.Label(text="Spam! detector:")
+    input = tk.Text()
+    button=tk.Button(text="Detect")
+    title.pack()
+    input.pack()
+    button.pack()
+    window.mainloop()
+gui()
+
